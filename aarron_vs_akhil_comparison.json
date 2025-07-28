@@ -1,9 +1,0 @@
-{
-  "aarron_file": "photos/aarron.jpg_embedding.json",
-  "akhil_file": "akhil.jpg_embedding.json",
-  "similarity": 0.4586538543616496,
-  "similarity_percentage": 45.86538543616496,
-  "model_used": "VGG-Face",
-  "embedding_dimensions": 4096,
-  "interpretation": "Low"
-}

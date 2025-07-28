@@ -146,8 +146,7 @@ if __name__ == "__main__":
     print("-" * 35)
     
     # You need to provide a path to an actual image
-    sample_image = "C:\\Users\\aarro\\Desktop\\Final_project\\photos\\aarron.jpg" 
-      # Replace with your actual image filename
+    sample_image = "photos\\aarron.jpg"  # Use relative path to photos folder
 
     if os.path.exists(sample_image):
         result = extract_facial_embedding(sample_image, model_name='VGG-Face')
@@ -156,10 +155,12 @@ if __name__ == "__main__":
             print(f"📊 Embedding dimensions: {result['embedding_size']}")
             print(f"🔢 First 5 values: {result['embedding'][:5]}")
             
-            # Save individual embedding
-            with open(f"{sample_image}_embedding.json", 'w') as f:
+            # Save individual embedding to facial_embeddings folder
+            filename = os.path.basename(sample_image).replace('.jpg', '_embedding.json')
+            embedding_path = os.path.join('facial_embeddings', filename)
+            with open(embedding_path, 'w') as f:
                 json.dump(result, f, indent=2)
-            print(f"💾 Embedding saved to: {sample_image}_embedding.json")
+            print(f"💾 Embedding saved to: {embedding_path}")
         else:
             print(f"❌ Failed to extract embedding: {result['error']}")
     else:
@@ -185,7 +186,7 @@ if __name__ == "__main__":
         print(f"📸 Found {len(image_files)} images in '{photos_folder}' folder")
         user_input = input("Process all images? (y/n): ").lower().strip()
         if user_input == 'y':
-            process_multiple_images(photos_folder, "all_embeddings.json")
+            process_multiple_images(photos_folder, "facial_embeddings/all_embeddings.json")
     else:
         print(f"📂 No images found in '{photos_folder}' folder")
         print("📋 Add photos (.jpg, .png, etc.) to the 'photos' folder to batch process them")

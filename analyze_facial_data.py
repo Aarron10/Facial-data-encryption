@@ -131,8 +131,12 @@ def compare_two_embeddings(file1, file2):
 def export_embedding_summary():
     """Create a summary report of all facial data"""
     
-    # Find all JSON files
-    json_files = [f for f in os.listdir('.') if f.endswith('.json')]
+    # Find all JSON files in facial_embeddings folder
+    embeddings_folder = 'facial_embeddings'
+    if not os.path.exists(embeddings_folder):
+        os.makedirs(embeddings_folder)
+    
+    json_files = [os.path.join(embeddings_folder, f) for f in os.listdir(embeddings_folder) if f.endswith('.json')]
     
     summary = {
         'report_date': datetime.now().isoformat(),
@@ -196,12 +200,15 @@ def export_embedding_summary():
     summary['statistics']['models_used'] = list(summary['statistics']['models_used'])
     summary['statistics']['embedding_dimensions'] = list(summary['statistics']['embedding_dimensions'])
     
-    # Save summary
-    with open('facial_data_summary.json', 'w') as f:
+    # Save summary to results folder
+    if not os.path.exists('results'):
+        os.makedirs('results')
+    
+    with open('results/facial_data_summary.json', 'w') as f:
         json.dump(summary, f, indent=2)
     
     print(f"\n📊 Summary Report Generated!")
-    print(f"💾 Saved as: facial_data_summary.json")
+    print(f"💾 Saved as: results/facial_data_summary.json")
     
     return summary
 
@@ -211,25 +218,33 @@ def main():
     print("🔍 FACIAL DATA ANALYSIS TOOL")
     print("=" * 50)
     
-    # List all JSON files
-    json_files = [f for f in os.listdir('.') if f.endswith('.json')]
+    # Look for JSON files in facial_embeddings folder
+    embeddings_folder = 'facial_embeddings'
+    if not os.path.exists(embeddings_folder):
+        print("📂 No facial_embeddings folder found!")
+        return
+    
+    # List all JSON files in facial_embeddings folder
+    json_files = [os.path.join(embeddings_folder, f) for f in os.listdir(embeddings_folder) if f.endswith('.json')]
     
     if not json_files:
         print("📂 No facial data files found!")
         return
     
     print(f"📁 Found {len(json_files)} facial data files:")
-    for i, filename in enumerate(json_files, 1):
-        size_kb = round(os.path.getsize(filename) / 1024, 2)
+    for i, filepath in enumerate(json_files, 1):
+        filename = os.path.basename(filepath)
+        size_kb = round(os.path.getsize(filepath) / 1024, 2)
         print(f"  {i}. {filename} ({size_kb} KB)")
     
     # Analyze each file
-    for filename in json_files:
+    for filepath in json_files:
+        filename = os.path.basename(filepath)
         if 'summary' not in filename:  # Skip summary files
             if 'all_embeddings' in filename or 'batch' in filename:
-                analyze_batch_embeddings(filename)
+                analyze_batch_embeddings(filepath)
             else:
-                analyze_single_embedding(filename)
+                analyze_single_embedding(filepath)
     
     # Generate summary report
     summary = export_embedding_summary()

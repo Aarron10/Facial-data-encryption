@@ -179,14 +179,19 @@ class FaceEmbeddingSystem:
     
     def save_database(self):
         """Save embeddings database to file"""
-        with open('face_database.json', 'w') as f:
+        # Create facial_embeddings folder if it doesn't exist
+        if not os.path.exists('facial_embeddings'):
+            os.makedirs('facial_embeddings')
+        
+        with open('facial_embeddings/face_database.json', 'w') as f:
             json.dump(self.embeddings_db, f, indent=2)
     
     def load_database(self):
         """Load embeddings database from file"""
-        if os.path.exists('face_database.json'):
+        database_path = 'facial_embeddings/face_database.json'
+        if os.path.exists(database_path):
             try:
-                with open('face_database.json', 'r') as f:
+                with open(database_path, 'r') as f:
                     self.embeddings_db = json.load(f)
                 print(f"📂 Loaded database with {len(self.embeddings_db)} people")
             except Exception as e:

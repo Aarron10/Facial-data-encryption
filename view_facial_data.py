@@ -12,8 +12,14 @@ def simple_data_viewer():
     print("👤 YOUR FACIAL DATA VIEWER")
     print("=" * 40)
     
-    # Find all your facial data files
-    json_files = [f for f in os.listdir('.') if f.endswith('_embedding.json') or f == 'all_embeddings.json']
+    # Find all your facial data files in the facial_embeddings folder
+    embeddings_folder = 'facial_embeddings'
+    if not os.path.exists(embeddings_folder):
+        print("📂 No facial_embeddings folder found!")
+        return
+    
+    json_files = [os.path.join(embeddings_folder, f) for f in os.listdir(embeddings_folder) 
+                  if f.endswith('_embedding.json') or f == 'all_embeddings.json']
     
     if not json_files:
         print("📂 No facial data found!")
@@ -28,7 +34,7 @@ def simple_data_viewer():
     print("-" * 30)
     
     # Method 1: Load specific person's data
-    akhil_file = "akhil.jpg_embedding.json"
+    akhil_file = os.path.join(embeddings_folder, "akhil.jpg_embedding.json")
     if os.path.exists(akhil_file):
         with open(akhil_file, 'r') as f:
             akhil_data = json.load(f)
@@ -46,7 +52,7 @@ def simple_data_viewer():
         print(f"   embedding = data['embedding']  # 4096-dimensional vector")
     
     # Method 2: Load batch data
-    batch_file = "all_embeddings.json"
+    batch_file = os.path.join(embeddings_folder, "all_embeddings.json")
     if os.path.exists(batch_file):
         with open(batch_file, 'r') as f:
             batch_data = json.load(f)

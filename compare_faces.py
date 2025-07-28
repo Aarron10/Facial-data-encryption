@@ -3,6 +3,7 @@ Compare Aarron and Akhil facial embeddings
 """
 
 import json
+import os
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -14,7 +15,7 @@ def compare_aarron_and_akhil():
     
     # Load Aarron's embedding
     try:
-        with open('photos/aarron.jpg_embedding.json', 'r') as f:
+        with open('facial_embeddings/aarron.jpg_embedding.json', 'r') as f:
             aarron_data = json.load(f)
         aarron_embedding = aarron_data['embedding']
         print(f"✅ Loaded Aarron's embedding: {len(aarron_embedding)} dimensions")
@@ -24,7 +25,7 @@ def compare_aarron_and_akhil():
     
     # Load Akhil's embedding
     try:
-        with open('akhil.jpg_embedding.json', 'r') as f:
+        with open('facial_embeddings/akhil.jpg_embedding.json', 'r') as f:
             akhil_data = json.load(f)
         akhil_embedding = akhil_data['embedding']
         print(f"✅ Loaded Akhil's embedding: {len(akhil_embedding)} dimensions")
@@ -71,10 +72,10 @@ def compare_aarron_and_akhil():
     print(f"   Mean: {akhil_stats.mean():.6f}")
     print(f"   Std: {akhil_stats.std():.6f}")
     
-    # Save comparison result
+    # Save comparison result to results folder
     comparison_result = {
-        'aarron_file': 'photos/aarron.jpg_embedding.json',
-        'akhil_file': 'akhil.jpg_embedding.json',
+        'aarron_file': 'facial_embeddings/aarron.jpg_embedding.json',
+        'akhil_file': 'facial_embeddings/akhil.jpg_embedding.json',
         'similarity': similarity,
         'similarity_percentage': similarity * 100,
         'model_used': 'VGG-Face',
@@ -82,10 +83,13 @@ def compare_aarron_and_akhil():
         'interpretation': 'Very High' if similarity > 0.8 else 'Moderate' if similarity > 0.6 else 'Low' if similarity > 0.4 else 'Very Low'
     }
     
-    with open('aarron_vs_akhil_comparison.json', 'w') as f:
+    if not os.path.exists('results'):
+        os.makedirs('results')
+    
+    with open('results/aarron_vs_akhil_comparison.json', 'w') as f:
         json.dump(comparison_result, f, indent=2)
     
-    print(f"\n💾 Comparison saved to: aarron_vs_akhil_comparison.json")
+    print(f"\n💾 Comparison saved to: results/aarron_vs_akhil_comparison.json")
 
 if __name__ == "__main__":
     compare_aarron_and_akhil()
